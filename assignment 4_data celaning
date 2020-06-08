@@ -1,0 +1,48 @@
+# this is the code I used to complete the 4th assignment for the python data structures coursera course
+import pandas as pd
+import numpy as np
+with open('university_towns.txt') as file:
+    list_uni = []
+    for line in file:
+        list_uni.append(line[:-1])
+print(list_uni[:20])
+
+data = []
+state = []
+region = []
+for line in list_uni:
+    if line[-6:] == '[edit]':
+        state = line[:-6]
+    elif line[-3] == '[':
+        region = line[:-3]
+    data.append([state, region])
+print(data[:20])
+uni = pd.DataFrame(data, columns = ['State','RegionName'])
+##uni = uni.to_frame()
+print(uni.head())
+##### removes all unwanted characters within parentheses
+uni['RegionName'] = uni['RegionName'].str.replace(r"\(.*\)", "")
+uni = uni.dropna()
+print(uni.head())
+# reading excel file
+gdp = pd.read_excel('gdplev.xls',skiprows=5,skip_blank_lines = True, usecols = "E:G")
+print(gdp.head())
+gdp = gdp [['Unnamed: 4', 'GDP in billions of chained 2009 dollars.1']].dropna()
+gdp.columns = ['Year','GDP in billions']
+print(gdp.shape)
+print(gdp.head())
+#getting the index of the row where 200q1 data starts
+ind = gdp.index[gdp['Year']=='2000q1']
+print(ind)
+#usign boolean masking to get a new dataframe with values only from 2000q1 onwards
+gdp_c = gdp.iloc[214:]
+gdp_c = gdp_c.reset_index()
+print(gdp_c.head())
+print(gdp_c.shape)
+print(len(gdp_c.index))
+print(gdp_c.iloc[4,2])
+for i in range(0,len(gdp_c.index)-2):
+               if (gdp_c.iloc[i,2]) > (gdp_c.iloc[i+1,2]) and (gdp_c.iloc[i+1,2]) > (gdp_c.iloc[i+2,2]):
+                   recession_start = gdp_c.iloc[i,1]
+
+print(recession_start)
